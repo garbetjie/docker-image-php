@@ -6,7 +6,7 @@ daemonize = false
 [app]
 user = app
 group = app
-listen = 127.0.0.1:9000
+listen = /run/php-fpm.sock
 pm = $FPM_PM
 pm.max_children = $FPM_MAX_CHILDREN
 pm.min_spare_servers = $FPM_MIN_SPARE_SERVERS
