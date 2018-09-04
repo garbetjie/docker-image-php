@@ -123,7 +123,7 @@ ONBUILD RUN set -e; \
 # Install XDebug if required.
 ONBUILD run set -e; \
     if [ "$XDEBUG_ENABLED" != "true" ]; then \
-        rm $PHPRC/conf.d/30-xdebug.ini.tpl; \
+        rm $PHPRC/conf.d/30-xdebug.ini; \
         exit 0; \
     fi; \
     apk add --no-cache php7-xdebug
