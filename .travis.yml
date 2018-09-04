@@ -8,9 +8,9 @@ env:
   - VERSION=7.2
 
 before_install:
-  - docker pull garbetjie/php:${VERSION}-onbuild
-  - docker pull garbetjie/php:${VERSION}-newrelic
-  - docker pull garbetjie/php:${VERSION}
+  - docker pull garbetjie/php:${VERSION}-onbuild || true
+  - docker pull garbetjie/php:${VERSION}-newrelic || true
+  - docker pull garbetjie/php:${VERSION} || true
 
 script:
   - |
