@@ -1,0 +1,38 @@
+---
+language: generic
+sudo: required
+services:
+  - docker
+
+env:
+  - VERSION=7.2
+
+before_install:
+  - docker pull garbetjie/php:${VERSION}-onbuild
+  - docker pull garbetjie/php:${VERSION}-newrelic
+  - docker pull garbetjie/php:${VERSION}
+
+script:
+  - |
+      docker build -t garbetjie/php:${VERSION}-onbuild \
+                   -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile-onbuild \
+                   --cache-from garbetjie/php:${VERSION}-onbuild \
+                   $TRAVIS_BUILD_DIR
+  - |
+      docker build -t garbetjie/php:${VERSION}-newrelic \
+                   -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile \
+                   --build-arg NEWRELIC_ENABLED=true \
+                   --cache-from garbetjie/php:${VERSION}-newrelic \
+                   $TRAVIS_BUILD_DIR
+  - |
+      docker build -t garbetjie/php:${VERSION} \
+                   -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile \
+                   --build-arg XDEBUG_ENABLED=true \
+                   --cache-from garbetjie/php:${VERSION} \
+                   $TRAVIS_BUILD_DIR
+
+deploy:
+  provider: script
+  script: bin/deploy.sh
+  on:
+    branch: master
