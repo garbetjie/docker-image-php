@@ -45,7 +45,7 @@ else
 fi
 
 # Replace templated files.
-for src_file in `find /etc/nginx -iname '*.tpl'`; do
+for src_file in `find /etc/nginx`; do
     envsubst '$WEBROOT
-              $TIMEOUT' < "$src_file" > "${src_file%.tpl}"
+              $TIMEOUT' < "$src_file" > "$src_file"
 done
