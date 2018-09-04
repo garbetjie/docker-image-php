@@ -1,14 +1,19 @@
-#!/usr/bin/env sh
+#!/usr/bin/dumb-init sh
+set -e
 
 # Initialize user if not root.
-if [ $(id -u) != 0 ]; then
-	deluser app &> /dev/null
-	adduser -D -g '' -u ${UID} -h /app -s /sbin/nologin app
-	chown -RL app:app /var/lib/nginx /var/log/newrelic
-fi
+userdel -f app &> /dev/null || true
+groupdel -f app &> /dev/null || true
+
+groupadd -o -g ${GID} app
+useradd -K MAIL_DIR=/dev/null -u ${UID} -G app -o -d /app -M -N -s /sbin/nologin app 2>/dev/null
+
+chown -RL app:app /var/lib/nginx /var/log/newrelic
 
 # Execute any initialization scripts.
+echo "Executing container initialization scripts."
 for script_path in /etc/cont-init.d/*; do
+    echo "  - ${script_path}"
 	sh ${script_path}
 done
 
