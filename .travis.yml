@@ -9,7 +9,6 @@ env:
 
 before_install:
   - docker pull garbetjie/php:${VERSION}-onbuild || true
-  - docker pull garbetjie/php:${VERSION}-newrelic || true
   - docker pull garbetjie/php:${VERSION} || true
 
 script:
@@ -17,12 +16,6 @@ script:
       docker build -t garbetjie/php:${VERSION}-onbuild \
                    -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile-onbuild \
                    --cache-from garbetjie/php:${VERSION}-onbuild \
-                   $TRAVIS_BUILD_DIR
-  - |
-      docker build -t garbetjie/php:${VERSION}-newrelic \
-                   -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile \
-                   --build-arg NEWRELIC_ENABLED=true \
-                   --cache-from garbetjie/php:${VERSION}-newrelic \
                    $TRAVIS_BUILD_DIR
   - |
       docker build -t garbetjie/php:${VERSION} \
