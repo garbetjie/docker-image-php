@@ -2,7 +2,7 @@
 set -e
 
 # Replace INI configuration
-for src_file in `find $PHP_INI_DIR/php.ini $PHP_INI_DIR/conf.d`; do
+for src_file in `find $PHPRC/php.ini $PHPRC/conf.d -type f`; do
 	envsubst '$ERROR_REPORTING
 	          $MEMORY_LIMIT
               $POST_MAX_SIZE

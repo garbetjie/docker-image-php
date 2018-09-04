@@ -1,11 +1,9 @@
 FROM alpine:3.8
 
-WORKDIR /app
-
 ENV NEWRELIC_VERSION="8.1.0.209" \
 	PHP_VERSION="7.2.9-r1" \
-	PHP_INI_DIR="/etc/php" \
-	PHPRC="${PHP_INI_DIR}"
+	PHPRC="/etc/php" \
+	PHP_INI_SCAN_DIR="/etc/php/conf.d"
 
 # Provide build arguments for configuration.
 ONBUILD ARG UID=65534
@@ -16,8 +14,8 @@ ONBUILD ARG WEBROOT=/app
 ONBUILD ARG TIMEOUT=60
 ONBUILD ARG HSTS_ENABLED=false
 ONBUILD ARG SSL_ENABLED=false
-ONBUILD ARG SSL_CERT_DOWNLOAD_URL=""
-ONBUILD ARG SSL_KEY_DOWNLOAD_URL=""
+ONBUILD ARG SSL_CERT_URL=""
+ONBUILD ARG SSL_KEY_URL=""
 
 # PHP-FPM configuration.
 ONBUILD ARG FPM_MAX_CHILDREN=0
@@ -58,7 +56,11 @@ ONBUILD ENV \
     GID=${GID} \
 	\
     WEBROOT=${WEBROOT} \
-    NGINX_TIMEOUT=${NGINX_TIMEOUT} \
+    TIMEOUT=${TIMEOUT} \
+    SSL_ENABLED=${SSL_ENABLED} \
+    SSL_CERT_URL=${SSL_CERT_URL} \
+    SSL_KEY_URL=${SSL_KEY_URL} \
+    HSTS_ENABLED=${HSTS_ENABLED} \
     \
 	FPM_MAX_CHILDREN=${FPM_MAX_CHILDREN} \
     FPM_MAX_REQUESTS=${FPM_MAX_REQUESTS} \
@@ -103,29 +105,31 @@ RUN set -e; \
 		php7-openssl php7-pdo_mysql php7-pdo_sqlite php7-phar php7-redis php7-session php7-simplexml \
         php7-soap php7-sodium php7-sqlite3 php7-tokenizer php7-xml php7-xmlwriter php7-zip \
         php7-zlib; \
-	rm -rf /etc/nginx $PHP_INI_DIR; \
+	rm -rf /etc/nginx /etc/php7; \
     ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm; \
-    ln -s /etc/php $PHP_INI_DIR; \
 	mkdir -p /run/nginx /var/log/newrelic
-
-COPY /fs /
-ENTRYPOINT ["/init"]
 
 # Download, clean up and symlink New Relic extension. Only if it is enabled.
 ONBUILD RUN set -e; \
 	if [ "$NEWRELIC_ENABLED" != "true" ]; then \
-        rm $PHP_INI_DIR/conf.d/30-newrelic.ini.tpl; \
+        rm $PHPRC/conf.d/30-newrelic.ini; \
         exit 0; \
     fi; \
 	wget https://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz -O- | tar -xz -C /tmp; \
 	mv /tmp/newrelic-php5-${NEWRELIC_VERSION}-linux-musl /opt/newrelic; \
-	find /opt/newrelic/agent/x64 -type f ! -name "newrelic-$(php -i | grep -F 'PHP Extension =' | sed -e 's/PHP Extension => //').so" -delete; \
-	ln -s "$(find /opt/newrelic/agent/x64 -iname '*.so' | head -n 1)" $(php -r 'echo ini_get("extension_dir");')/newrelic.so;
+	find /opt/newrelic/agent/x64 -type f ! -name "newrelic-$(php -n -i | grep -F 'PHP Extension =' | sed -e 's/PHP Extension => //').so" -delete; \
+	ln -s "$(find /opt/newrelic/agent/x64 -iname '*.so' | head -n 1)" $(php -n -r 'echo ini_get("extension_dir");')/newrelic.so;
 
-# Install XDebug if enabled.
+# Install XDebug if required.
 ONBUILD run set -e; \
     if [ "$XDEBUG_ENABLED" != "true" ]; then \
-        rm $PHP_INI_DIR/conf.d/30-xdebug.ini.tpl; \
+        rm $PHPRC/conf.d/30-xdebug.ini.tpl; \
         exit 0; \
     fi; \
     apk add --no-cache php7-xdebug
+
+COPY /fs /
+ENTRYPOINT ["/init"]
+WORKDIR /app
+
+EXPOSE 80/tcp 443/tcp

@@ -6,15 +6,15 @@ cd /etc/nginx
 # SSL is enabled, so download certificate and key files if provided, and the files
 # don't already exist.
 if [ "$SSL_ENABLED" = true ]; then
-	if ! [ -f ssl.crt ] && [ "$SSL_CERT_DOWNLOAD_URL" ]; then
-		echo -n "Downloading SSL certificate from '${SSL_CERT_DOWNLOAD_URL}'... "
-		wget -O ssl.crt "$SSL_CERT_DOWNLOAD_URL" 2>/dev/null
+	if ! [ -f ssl.crt ] && [ "$SSL_CERT_URL" ]; then
+		echo -n "Downloading SSL certificate from '${SSL_CERT_URL}'... "
+		wget -O ssl.crt "$SSL_CERT_URL" 2>/dev/null
 		echo "done"
 	fi
 
-	if ! [ -f ssl.key ] && [ "$SSL_KEY_DOWNLOAD_URL" ]; then
-		echo -n "Downloading SSL key from '${SSL_KEY_DOWNLOAD_URL}'... "
-		wget -O ssl.key "$SSL_KEY_DOWNLOAD_URL" 2>/dev/null
+	if ! [ -f ssl.key ] && [ "$SSL_KEY_URL" ]; then
+		echo -n "Downloading SSL key from '${SSL_KEY_URL}'... "
+		wget -O ssl.key "$SSL_KEY_URL" 2>/dev/null
 		echo "done"
 	fi
 
@@ -45,7 +45,7 @@ else
 fi
 
 # Replace templated files.
-for src_file in `find /etc/nginx`; do
+for src_file in `find /etc/nginx -type f`; do
     envsubst '$WEBROOT
               $TIMEOUT' < "$src_file" > "$src_file"
 done

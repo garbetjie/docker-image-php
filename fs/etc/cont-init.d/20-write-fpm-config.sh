@@ -11,4 +11,4 @@ envsubst '$FPM_PM
           $FPM_MIN_SPARE_SERVERS
           $FPM_MAX_SPARE_SERVERS
           $FPM_MAX_REQUESTS
-          $TIMEOUT' < $PHP_INI_DIR/php-fpm.conf > $PHP_INI_DIR/php-fpm.conf
+          $TIMEOUT' < $PHPRC/php-fpm.conf > $PHPRC/php-fpm.conf
