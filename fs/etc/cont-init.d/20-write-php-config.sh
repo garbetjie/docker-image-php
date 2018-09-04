@@ -3,6 +3,8 @@ set -e
 
 # Replace INI configuration
 for src_file in `find $PHPRC/php.ini $PHPRC/conf.d -type f`; do
+    temporary_file="$(dirname $src_file)/.$(basename $src_file).tmp"
+
 	envsubst '$ERROR_REPORTING
 	          $MEMORY_LIMIT
               $POST_MAX_SIZE
@@ -22,5 +24,7 @@ for src_file in `find $PHPRC/php.ini $PHPRC/conf.d -type f`; do
               $XDEBUG_REMOTE_HOST
               $XDEBUG_REMOTE_PORT
               $XDEBUG_REMOTE_AUTOSTART
-              $XDEBUG_IDE_KEY' < "$src_file" > "$src_file"
+              $XDEBUG_IDE_KEY' < "$src_file" > "$temporary_file"
+
+    mv "$temporary_file" "$src_file"
 done

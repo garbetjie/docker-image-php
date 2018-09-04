@@ -46,6 +46,10 @@ fi
 
 # Replace templated files.
 for src_file in `find /etc/nginx -type f`; do
+    temporary_file="$(dirname $src_file)/.$(basename $src_file).tmp"
+
     envsubst '$WEBROOT
-              $TIMEOUT' < "$src_file" > "$src_file"
+              $TIMEOUT' < "$src_file" > "$temporary_file"
+
+    mv "$temporary_file" "$src_file"
 done
