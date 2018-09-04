@@ -19,7 +19,7 @@ done
 
 # If no arguments provided, then start up the web server.
 if [ "$1" = "" ]; then
-    php-fpm -t || exit 1
+    php-fpm -t -y $PHPRC/php-fpm.conf || exit 1
     nginx -t 2> /dev/null || exit 2
 
     echo -n "Starting web server... "

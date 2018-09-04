@@ -126,7 +126,8 @@ ONBUILD run set -e; \
         rm $PHPRC/conf.d/30-xdebug.ini; \
         exit 0; \
     fi; \
-    apk add --no-cache php7-xdebug
+    apk add --no-cache php7-xdebug; \
+    rm -rf /etc/php7
 
 COPY /fs /
 ENTRYPOINT ["/init"]
