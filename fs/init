@@ -23,7 +23,7 @@ if [ "$1" = "" ]; then
     nginx -t 2> /dev/null || exit 2
 
     echo -n "Starting web server... "
-    php-fpm -F &
+    php-fpm -F -y $PHPRC/php-fpm.conf &
     nginx &
     echo "done"
 
