@@ -1,99 +1,55 @@
 FROM alpine:3.8
 
+# Set environment variables based on build arg values.
+ENV UID=65534 \
+    GID=65534 \
+	\
+    WEBROOT=/app \
+    TIMEOUT=60 \
+    SSL_ENABLED=false \
+    SSL_CERT_URL="" \
+    SSL_KEY_URL="" \
+    HSTS_ENABLED=false \
+    HSTS_MAX_AGE=0 \
+    \
+	FPM_MAX_CHILDREN=0 \
+    FPM_MAX_REQUESTS=10000 \
+    FPM_MAX_SPARE_SERVERS=15 \
+    FPM_MIN_SPARE_SERVERS=5 \
+    FPM_PM=static \
+    \
+    TIMEZONE="Etc/UTC" \
+    DISPLAY_ERRORS=Off \
+    ERROR_REPORTING="E_ALL & ~E_DEPRECATED & ~E_STRICT" \
+    HTML_ERRORS="Off" \
+    MAX_EXECUTION_TIME=30 \
+    MEMORY_LIMIT="64M" \
+    POST_MAX_SIZE="8M" \
+    SESSION_SAVE_HANDLER="files" \
+    SESSION_SAVE_PATH="/tmp/sessions" \
+    UPLOAD_MAX_FILESIZE="2M" \
+    \
+    XDEBUG_IDE_KEY="IDEKEY" \
+    XDEBUG_REMOTE_AUTOSTART=0 \
+    XDEBUG_REMOTE_HOST="192.168.99.1" \
+    XDEBUG_REMOTE_PORT=9000 \
+    XDEBUG_SERVER_NAME="\$server_name" \
+    \
+    NEWRELIC_APP_NAME="" \
+    NEWRELIC_AUTORUM_ENABLED=0 \
+    NEWRELIC_LABELS="" \
+    NEWRELIC_LICENCE=""
+
 ENV NEWRELIC_VERSION="8.1.0.209" \
-	PHP_VERSION="7.2.9-r1" \
 	PHPRC="/etc/php" \
 	PHP_INI_SCAN_DIR="/etc/php/conf.d"
 
-# Provide build arguments for configuration.
-ONBUILD ARG UID=65534
-ONBUILD ARG GID=65534
-
-# NGiNX configuration.
-ONBUILD ARG WEBROOT=/app
-ONBUILD ARG TIMEOUT=60
-ONBUILD ARG HSTS_ENABLED=false
-ONBUILD ARG SSL_ENABLED=false
-ONBUILD ARG SSL_CERT_URL=""
-ONBUILD ARG SSL_KEY_URL=""
-
-# PHP-FPM configuration.
-ONBUILD ARG FPM_MAX_CHILDREN=0
-ONBUILD ARG FPM_MAX_REQUESTS=1
-ONBUILD ARG FPM_PM=static
-ONBUILD ARG FPM_MIN_SPARE_SERVERS=5
-ONBUILD ARG FPM_MAX_SPARE_SERVERS=15
-ONBUILD ARG FPM_TIMEOUT=60
-
-# PHP configuration.
-ONBUILD ARG TIMEZONE="Etc/UTC"
-ONBUILD ARG DISPLAY_ERRORS=Off
-ONBUILD ARG ERROR_REPORTING="E_ALL & ~E_DEPRECATED & ~E_STRICT"
-ONBUILD ARG HTML_ERRORS=Off
-ONBUILD ARG MAX_EXECUTION_TIME=30
-ONBUILD ARG MEMORY_LIMIT=32M
-ONBUILD ARG POST_MAX_SIZE=8M
-ONBUILD ARG SESSION_SAVE_HANDLER="files"
-ONBUILD ARG SESSION_SAVE_PATH="/tmp/sessions"
-ONBUILD ARG UPLOAD_MAX_FILESIZE=2M
-
-ONBUILD ARG XDEBUG_ENABLED=false
-ONBUILD ARG XDEBUG_IDE_KEY=IDEKEY
-ONBUILD ARG XDEBUG_REMOTE_AUTOSTART=0
-ONBUILD ARG XDEBUG_REMOTE_HOST=192.168.99.1
-ONBUILD ARG XDEBUG_REMOTE_PORT=9000
-ONBUILD ARG XDEBUG_SERVER_NAME="\$server_name"
-
-ONBUILD ARG NEWRELIC_APP_NAME=""
-ONBUILD ARG NEWRELIC_AUTORUM_ENABLED=0
 ONBUILD ARG NEWRELIC_ENABLED=false
-ONBUILD ARG NEWRELIC_LABELS=""
-ONBUILD ARG NEWRELIC_LICENCE=""
-
-# Set environment variables based on build arg values.
-ONBUILD ENV \
-	UID=${UID} \
-    GID=${GID} \
-	\
-    WEBROOT=${WEBROOT} \
-    TIMEOUT=${TIMEOUT} \
-    SSL_ENABLED=${SSL_ENABLED} \
-    SSL_CERT_URL=${SSL_CERT_URL} \
-    SSL_KEY_URL=${SSL_KEY_URL} \
-    HSTS_ENABLED=${HSTS_ENABLED} \
-    \
-	FPM_MAX_CHILDREN=${FPM_MAX_CHILDREN} \
-    FPM_MAX_REQUESTS=${FPM_MAX_REQUESTS} \
-    FPM_MAX_SPARE_SERVERS=${FPM_MAX_SPARE_SERVERS} \
-    FPM_MIN_SPARE_SERVERS=${FPM_MIN_SPARE_SERVERS} \
-    FPM_PM=${FPM_PM} \
-    FPM_REQUEST_TERMINATE_TIMEOUT=${FPM_REQUEST_TERMINATE_TIMEOUT} \
-    \
-    TIMEZONE=${TIMEZONE} \
-    DISPLAY_ERRORS=${DISPLAY_ERRORS} \
-    ERROR_REPORTING=${ERROR_REPORTING} \
-    HTML_ERRORS=${HTML_ERRORS} \
-    MAX_EXECUTION_TIME=${MAX_EXECUTION_TIME} \
-    MEMORY_LIMIT=${MEMORY_LIMIT} \
-    POST_MAX_SIZE=${POST_MAX_SIZE} \
-    SESSION_SAVE_HANDLER=${SESSION_SAVE_HANDLER} \
-    SESSION_SAVE_PATH=${SESSION_SAVE_PATH} \
-    UPLOAD_MAX_FILESIZE=${UPLOAD_MAX_FILESIZE} \
-    \
-    XDEBUG_IDE_KEY=${XDEBUG_IDE_KEY} \
-    XDEBUG_REMOTE_AUTOSTART=${XDEBUG_REMOTE_AUTOSTART} \
-    XDEBUG_REMOTE_HOST=${XDEBUG_REMOTE_HOST} \
-    XDEBUG_REMOTE_PORT=${XDEBUG_REMOTE_PORT} \
-    XDEBUG_SERVER_NAME=${XDEBUG_SERVER_NAME} \
-    \
-    NEWRELIC_APP_NAME=${NEWRELIC_APP_NAME} \
-    NEWRELIC_AUTORUM_ENABLED=${NEWRELIC_AUTORUM_ENABLED} \
-    NEWRELIC_LABELS=${NEWRELIC_LABELS} \
-    NEWRELIC_LICENCE=${NEWRELIC_LICENCE}
+ONBUILD ARG XDEBUG_ENABLED=false
 
 # Ensure required directories exist.
 RUN set -e; \
-	mkdir -p /opt /app; \
+	mkdir -p /opt /app /run; \
 	apk add --no-cache ca-certificates dumb-init su-exec nginx gettext openssl shadow;
 
 # Install the PHP extensions already available in Alpine.
@@ -106,8 +62,7 @@ RUN set -e; \
         php7-soap php7-sodium php7-sqlite3 php7-tokenizer php7-xml php7-xmlwriter php7-zip \
         php7-zlib; \
 	rm -rf /etc/nginx /etc/php7; \
-    ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm; \
-	mkdir -p /run/nginx /var/log/newrelic
+    ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm;
 
 # Download, clean up and symlink New Relic extension. Only if it is enabled.
 ONBUILD RUN set -e; \
@@ -115,6 +70,7 @@ ONBUILD RUN set -e; \
         rm $PHPRC/conf.d/30-newrelic.ini; \
         exit 0; \
     fi; \
+	mkdir -p /opt/newrelic /var/log/newrelic; \
 	wget https://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz -O- | tar -xz -C /tmp; \
 	mv /tmp/newrelic-php5-${NEWRELIC_VERSION}-linux-musl /opt/newrelic; \
 	find /opt/newrelic/agent/x64 -type f ! -name "newrelic-$(php -n -i | grep -F 'PHP Extension =' | sed -e 's/PHP Extension => //').so" -delete; \
@@ -127,7 +83,7 @@ ONBUILD run set -e; \
         exit 0; \
     fi; \
     apk add --no-cache php7-xdebug; \
-    rm -rf /etc/php7
+    rm -rf /etc/php7;
 
 COPY /fs /
 ENTRYPOINT ["/init"]

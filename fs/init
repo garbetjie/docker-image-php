@@ -13,7 +13,6 @@ chown -RL app:app /var/lib/nginx /var/log/newrelic
 # Execute any initialization scripts.
 echo "Executing container initialization scripts."
 for script_path in /etc/cont-init.d/*; do
-    echo "  - ${script_path}"
 	sh ${script_path}
 done
 

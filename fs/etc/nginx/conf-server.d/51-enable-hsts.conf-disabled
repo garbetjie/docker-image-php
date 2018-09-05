@@ -1,1 +1,1 @@
-add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+add_header Strict-Transport-Security "max-age=${HSTS_MAX_AGE}; includeSubdomains; preload";
