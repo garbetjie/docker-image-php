@@ -8,12 +8,6 @@ groupdel -f app &> /dev/null || true
 groupadd -o -g ${GID} app
 useradd -K MAIL_DIR=/dev/null -u ${UID} -G app -o -d /app -M -N -s /sbin/nologin app 2>/dev/null
 
-# Chown necessary directories.
-for dirname in /var/lib/nginx /var/log/newrelic; do
-    if [ -d "$dirname" ]; then chown -RL app:app "$dirname"; fi
-done
-
-
 # Execute any initialization scripts.
 echo "Executing container initialization scripts."
 for script_path in /etc/cont-init.d/*; do
