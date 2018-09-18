@@ -17,6 +17,7 @@ ENV UID=65534 \
     FPM_MAX_SPARE_SERVERS=15 \
     FPM_MIN_SPARE_SERVERS=5 \
     FPM_PM=static \
+    FPM_STATUS_IPS="127.0.0.1" \
     \
     TIMEZONE="Etc/UTC" \
     DISPLAY_ERRORS=Off \

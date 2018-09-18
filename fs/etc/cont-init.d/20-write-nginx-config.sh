@@ -50,7 +50,8 @@ for src_file in `find /etc/nginx -type f`; do
 
     envsubst '$WEBROOT
               $TIMEOUT
-              $HSTS_MAX_AGE' < "$src_file" > "$temporary_file"
+              $HSTS_MAX_AGE
+              $FPM_STATUS_IPS' < "$src_file" > "$temporary_file"
 
     mv "$temporary_file" "$src_file"
 done
