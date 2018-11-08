@@ -1,23 +1,34 @@
 #!/usr/bin/dumb-init sh
 set -e
+set -o pipefail
 
-# Initialize user if not root.
+# Initialize user.
 userdel -f app &> /dev/null || true
 groupdel -f app &> /dev/null || true
 
 groupadd -o -g ${GID} app
 useradd -K MAIL_DIR=/dev/null -u ${UID} -G app -o -d /app -M -N -s /sbin/nologin app 2>/dev/null
 
+# Configure fifos for stdout/stderr communication.
+echo -n "Creating fifo files... "
+rm -f /tmp/std*.log
+mkfifo -m 0777 /tmp/stdout.log
+mkfifo -m 0777 /tmp/stderr.log
+chown app:app /tmp/std*.log
+echo "done"
+
 # Execute any initialization scripts.
 echo "Executing container initialization scripts."
 for script_path in /etc/cont-init.d/*; do
 	sh ${script_path}
 done
+echo "Finished executing container initialization scripts."
 
 # If no arguments provided, then start up the web server.
 if [ "$1" = "" ]; then
-    php-fpm -t -y $PHPRC/php-fpm.conf || exit 1
-    nginx -t 2> /dev/null || exit 2
+    # Start reading data from fifo files.
+    cat /tmp/stderr.log 1>&2 &
+    cat /tmp/stdout.log &
 
     echo -n "Starting web server... "
     php-fpm -F -y $PHPRC/php-fpm.conf &
