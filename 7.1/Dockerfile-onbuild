@@ -97,3 +97,6 @@ ENTRYPOINT ["/init"]
 WORKDIR /app
 
 EXPOSE 80/tcp 443/tcp
+
+LABEL maintainer="geoff@garbers.co.za" \
+      org.label-schema.vcs-url="https://github.com/garbetjie/docker-image-php"
