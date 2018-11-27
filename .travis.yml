@@ -5,25 +5,34 @@ services:
   - docker
 
 env:
-  - VERSION=7.1
-  - VERSION=7.2
+  global:
+#    - DOCKER_HUB_LOGIN
+#    - DOCKER_HUB_PASSWORD
+#    - DOCKER_HUB_REPO
+    - SHORT_COMMIT="${TRAVIS_COMMIT:0:7}"
+  matrix:
+    - VERSION=7.1
+    - VERSION=7.2
 
 before_install:
-  - docker pull garbetjie/php:${VERSION}-onbuild || true
-  - docker pull garbetjie/php:${VERSION} || true
+  - docker pull ${DOCKER_HUB_REPO}/php:${VERSION}-onbuild || true
+  - docker pull ${DOCKER_HUB_REPO}/php:${VERSION} || true
 
 script:
   - |
-      docker build -t garbetjie/php:${VERSION}-onbuild \
+      docker build -t ${DOCKER_HUB_REPO}/php:${VERSION}-onbuild \
                    -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile-onbuild \
-                   --cache-from garbetjie/php:${VERSION}-onbuild \
+                   --cache-from ${DOCKER_HUB_REPO}/php:${VERSION}-onbuild \
                    $TRAVIS_BUILD_DIR
+  -   docker tag ${DOCKER_HUB_REPO}/php:${VERSION}-onbuild ${DOCKER_HUB_REPO}/php:${VERSION}-onbuild-${SHORT_COMMIT}
+
   - |
-      docker build -t garbetjie/php:${VERSION} \
+      docker build -t ${DOCKER_HUB_REPO}/php:${VERSION} \
                    -f $TRAVIS_BUILD_DIR/${VERSION}/Dockerfile \
                    --build-arg XDEBUG_ENABLED=true \
-                   --cache-from garbetjie/php:${VERSION} \
+                   --cache-from ${DOCKER_HUB_REPO}/php:${VERSION} \
                    $TRAVIS_BUILD_DIR
+  -   docker tag ${DOCKER_HUB_REPO}/php:${VERSION} ${DOCKER_HUB_REPO}/php:${VERSION}-${SHORT_COMMIT}
 
 deploy:
   provider: script
