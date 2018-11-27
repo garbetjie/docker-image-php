@@ -7,7 +7,7 @@ for src_file in `find $PHPRC/php.ini $PHPRC/conf.d -type f`; do
 
 	envsubst '$ERROR_REPORTING
 	          $MEMORY_LIMIT
-              $POST_MAX_SIZE
+              $MAX_REQUEST_SIZE
               $UPLOAD_MAX_FILESIZE
               $TIMEZONE
               $SESSION_SAVE_HANDLER
