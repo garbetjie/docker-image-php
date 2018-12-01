@@ -82,10 +82,11 @@ The following values can be specified as environment variables to configure your
 When creating your own image from one of the `-onbuild` images, the following build arguments can be used to customise
 your image:
 
-| Name             | Type | Default | Description                                                                                                                         |
-|------------------|------|---------|-------------------------------------------------------------------------------------------------------------------------------------|
-| NEWRELIC_ENABLED | bool | false   | Enables the installation of the New Relic extension. If this is `false`, then all `NEWRELIC_*` configuration variables are ignored. |
-| XDEBUG_ENABLED   | bool | false   | Enables the installation of the XDebug extension. Anything that requires XDebug will not be available if this is `false`.           |
+| Name                        | Type | Default | Description                                                                                                                                                                 |
+|-----------------------------|------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| NEWRELIC_ENABLED            | bool | false   | Enables the installation of the New Relic extension. If this is `false`, then all `NEWRELIC_*` configuration variables are ignored.                                         |
+| XDEBUG_ENABLED              | bool | false   | Enables the installation of the XDebug extension. Anything that requires XDebug will not be available if this is `false`.                                                   |
+| STACKDRIVER_TRACING_ENABLED | bool | false   | Enables the use of [Stackdriver Tracing](https://cloud.google.com/trace/docs/setup/php), through the installation of the [opencensus](https://opencensus.io) PHP extension. |
 
 
 
@@ -122,7 +123,8 @@ replacing `$VERSION` with the version you're wanting to view the list of modules
 | mbstring     | mbstring     |
 | memcached    | memcached    |
 | mysqlnd      | mysqlnd      |
-| newrelic     | newrelic     |
+| newrelic*    | newrelic*    |
+| opencensus*  | opencensus*  |
 | openssl      | openssl      |
 | pcre         | pcre         |
 | pdo          | pdo          |
@@ -145,3 +147,5 @@ replacing `$VERSION` with the version you're wanting to view the list of modules
 | Zend OPcache | Zend OPcache |
 | zip          | zip          |
 | zlib         | zlib         |
+
+Packages marked with `*` are only installed through customisation of the `onbuild` images.
