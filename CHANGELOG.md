@@ -4,6 +4,10 @@ All notable changes to the Docker images will be outlined in this document. Cons
 follow semantic versioning, all versions provided will be identified by dates and commit hashes relating to the built
 Docker image.
 
+## [3364574] - 2018-12-06
+### Added
+- `xmlreader` extension.
+
 ## [9bbd0ef] - 2018-12-01
 ### Added
 - `STACKDRIVER_TRACING_ENABLED` build argument to the `onbuild` images. This installs the [opencensus](https://opencensus.io)
