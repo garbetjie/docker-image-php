@@ -143,6 +143,7 @@ replacing `$VERSION` with the version you're wanting to view the list of modules
 | tokenizer    | tokenizer    |
 | xdebug       | xdebug       |
 | xml          | xml          |
+| xmlreader    | xmlreader    |
 | xmlwriter    | xmlwriter    |
 | Zend OPcache | Zend OPcache |
 | zip          | zip          |
