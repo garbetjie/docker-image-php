@@ -20,6 +20,7 @@ for src_file in `find $PHPRC/php.ini $PHPRC/conf.d -type f`; do
               $NEWRELIC_APP_NAME
               $NEWRELIC_AUTORUM_ENABLED
               $NEWRELIC_LABELS
+              $NEWRELIC_RECORD_SQL
               $XDEBUG_ENABLED
               $XDEBUG_REMOTE_HOST
               $XDEBUG_REMOTE_PORT

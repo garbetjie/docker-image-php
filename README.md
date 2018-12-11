@@ -75,6 +75,7 @@ The following values can be specified as environment variables to configure your
 | NEWRELIC_AUTORUM_ENABLED | bool   | false                             | Enables automatic insertion of New Relic Browser monitoring scripts. [See documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-agent-configuration#inivar-autorum).                                        |
 | NEWRELIC_LABELS          | string | ""                                | Set label names and values for New Relic. [See documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-agent-configuration#inivar-labels).                                                                    |
 | NEWRELIC_LICENCE         | string | ""                                | **Required** if New Relic is enabled. Sets the licence key of your New Relic account. [See documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-agent-configuration#inivar-license).                       |
+| NEWRELIC_RECORD_SQL      | string | "obfuscated"                      | Sets the level at which database queries are logged. Can be set to `"off"` to disable query logging. [See documentation](https://docs.newrelic.com/docs/agents/php-agent/configuration/php-agent-configuration#inivar-tt-sql).         |
 
 
 ### Build arguments
