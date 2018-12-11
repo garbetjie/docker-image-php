@@ -4,14 +4,25 @@ All notable changes to the Docker images will be outlined in this document. Cons
 follow semantic versioning, all versions provided will be identified by dates and commit hashes relating to the built
 Docker image.
 
+## [ba04898] - 2018-12-11
+### Added
+- Added the ability to configure the `newrelic.transaction_tracer.record_sql` ini variable, through the `NEWRELIC_RECORD_SQL`
+  environment variable.
+
+### Changed
+- Default value of the `newrelic.transaction_tracer.record_sql` ini variable has changed from an empty string to `"obfuscated"`. 
+
+
 ## [3364574] - 2018-12-06
 ### Added
 - `xmlreader` extension.
+
 
 ## [9bbd0ef] - 2018-12-01
 ### Added
 - `STACKDRIVER_TRACING_ENABLED` build argument to the `onbuild` images. This installs the [opencensus](https://opencensus.io)
   PHP extension, and allows integration with [Stackdriver Tracing](https://cloud.google.com/trace/docs/setup/php).
+
 
 ## [06f32a6] - 2018-11-27
 ### Changed
